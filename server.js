@@ -29,7 +29,7 @@ sql.connect(dbConfig)
    .catch(err => console.error("❌ DB Connection Failed:", err));
 
 // ✅ Add User (CREATE)
-app.post("/customers", async (req, res) => {
+app.post("/api/users", async (req, res) => {
   const { Name, Email, Phone, Address } = req.body;
   try {
     let pool = await sql.connect(dbConfig);
@@ -59,7 +59,7 @@ app.get("/api/users", async (req, res) => {
 });
 
 // ✅ Update User (UPDATE)
-app.put("/customers", async (req, res) => {
+app.put("/api/users", async (req, res) => {
   const { id } = req.params;
   const { Name, Email, Phone, Address } = req.body;
   try {
@@ -79,7 +79,7 @@ app.put("/customers", async (req, res) => {
 });
 
 // ✅ Delete User (DELETE)
-app.delete("/customers", async (req, res) => {
+app.delete("/api/users", async (req, res) => {
   const { id } = req.params;
   try {
     let pool = await sql.connect(dbConfig);
