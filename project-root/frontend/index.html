@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer App</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    form { margin-bottom: 20px; }
+    input, button { margin: 5px; padding: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    button { cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h1>Customer Management</h1>
+
+  <!-- Add / Update Form -->
+  <form id="userForm">
+    <input type="hidden" id="userId">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="number" id="age" placeholder="Age" required>
+    <button type="submit">Save User</button>
+  </form>
+
+  <!-- Users Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Age</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="usersTable"></tbody>
+  </table>
+
+  <script>
+    const API_URL = "http://localhost:5000/api/users"; // 🔗 your backend API
+    
+    // Fetch all users
+    async function loadUsers() {
+      let res = await fetch(API_URL);
+      let users = await res.json();
+      let table = document.getElementById("usersTable");
+      table.innerHTML = "";
+      users.forEach(u => {
+        let row = `<tr>
+          <td>${u.id}</td>
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td>${u.age}</td>
+          <td>
+            <button onclick="editUser(${u.id}, '${u.name}', '${u.email}', ${u.age})">✏️ Edit</button>
+            <button onclick="deleteUser(${u.id})">🗑️ Delete</button>
+          </td>
+        </tr>`;
+        table.innerHTML += row;
+      });
+    }
+
+    // Add or Update User
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let id = document.getElementById("userId").value;
+      let user = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        age: parseInt(document.getElementById("age").value)
+      };
+      if (id) {
+        await fetch(`${API_URL}/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+        });
+      } else {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+        });
+      }
+      e.target.reset();
+      document.getElementById("userId").value = "";
+      loadUsers();
+    });
+
+    // Edit User
+    function editUser(id, name, email, age) {
+      document.getElementById("userId").value = id;
+      document.getElementById("name").value = name;
+      document.getElementById("email").value = email;
+      document.getElementById("age").value = age;
+    }
+
+    // Delete User
+    async function deleteUser(id) {
+      if (confirm("Are you sure?")) {
+        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        loadUsers();
+      }
+    }
+
+    // Load users initially
+    loadUsers();
+  </script>
+
+</body>
+</html>
