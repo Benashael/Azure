@@ -33,7 +33,7 @@ app.post("/api/users", async (req, res) => {
       .input("name", sql.NVarChar, name)
       .input("email", sql.NVarChar, email)
       .input("age", sql.Int, age)
-      .query("INSERT INTO Users (name, email, age) VALUES (@name, @email, @age)");
+      .query("INSERT INTO dbo.Customers (name, email, age) VALUES (@name, @email, @age)");
     res.send({ message: "User added successfully" });
   } catch (err) {
     console.error("❌ Error inserting user:", err);
@@ -45,7 +45,7 @@ app.post("/api/users", async (req, res) => {
 app.get("/api/users", async (req, res) => {
   try {
     let pool = await sql.connect(dbConfig);
-    let result = await pool.request().query("SELECT * FROM Users");
+    let result = await pool.request().query("SELECT * FROM dbo.Customers");
     res.json(result.recordset);
   } catch (err) {
     console.error("❌ Error fetching users:", err);
@@ -64,7 +64,7 @@ app.put("/api/users/:id", async (req, res) => {
       .input("name", sql.NVarChar, name)
       .input("email", sql.NVarChar, email)
       .input("age", sql.Int, age)
-      .query("UPDATE Users SET name=@name, email=@email, age=@age WHERE id=@id");
+      .query("UPDATE dbo.Customers SET name=@name, email=@email, age=@age WHERE id=@id");
     res.send({ message: "User updated successfully" });
   } catch (err) {
     console.error("❌ Error updating user:", err);
