@@ -24,6 +24,10 @@ const dbConfig = {
   }
 };
 
+sql.connect(dbConfig)
+   .then(() => console.log("✅ DB Connected Successfully"))
+   .catch(err => console.error("❌ DB Connection Failed:", err));
+
 // ✅ Add User (CREATE)
 app.post("/api/users", async (req, res) => {
   const { name, email, age } = req.body;
