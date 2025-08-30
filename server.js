@@ -29,16 +29,17 @@ sql.connect(dbConfig)
    .catch(err => console.error("❌ DB Connection Failed:", err));
 
 // ✅ Add User (CREATE)
-app.post("/api/users", async (req, res) => {
-  const { name, email, age } = req.body;
+app.post("/customers", async (req, res) => {
+  const { Name, Email, Phone, Address } = req.body;
   try {
     let pool = await sql.connect(dbConfig);
     await pool.request()
-      .input("name", sql.NVarChar, name)
-      .input("email", sql.NVarChar, email)
-      .input("age", sql.Int, age)
-      .query("INSERT INTO dbo.Customers (name, email, phone, address) VALUES (@Name, @Email, @Phone, @Address)");
-    res.send({ message: "User added successfully" });
+      .input("Name", sql.VarChar, Name)
+      .input("Email", sql.VarChar, Email)
+      .input("Phone", sql.VarChar, Phone)
+      .input("Address", sql.VarChar, Address)
+      .query("INSERT INTO dbo.Customers (Name, Email, Phone, Address) VALUES (@Name, @Email, @Phone, @Address)");
+    res.status(201).send({ message: "User added successfully" });
   } catch (err) {
     console.error("❌ Error inserting user:", err);
     res.status(500).send(err.message);
@@ -46,7 +47,7 @@ app.post("/api/users", async (req, res) => {
 });
 
 // ✅ Get All Users (READ)
-app.get("/api/users", async (req, res) => {
+app.get("/customers", async (req, res) => {
   try {
     let pool = await sql.connect(dbConfig);
     let result = await pool.request().query("SELECT * FROM dbo.Customers");
@@ -58,17 +59,18 @@ app.get("/api/users", async (req, res) => {
 });
 
 // ✅ Update User (UPDATE)
-app.put("/api/users/:id", async (req, res) => {
+app.put("/customers", async (req, res) => {
   const { id } = req.params;
-  const { name, email, age } = req.body;
+  const { Name, Email, Phone, Address } = req.body;
   try {
     let pool = await sql.connect(dbConfig);
     await pool.request()
-      .input("id", sql.Int, id)
-      .input("name", sql.NVarChar, name)
-      .input("email", sql.NVarChar, email)
-      .input("age", sql.Int, age)
-      .query("UPDATE dbo.Customers SET name=@name, email=@email, age=@age WHERE id=@id");
+      .input("CustomerID", sql.Int, id)
+      .input("Name", sql.VarChar, Name)
+      .input("Email", sql.VarChar, Email)
+      .input("Phone", sql.VarChar, Phone)
+      .input("Address", sql.VarChar, Address)
+      .query("UPDATE dbo.Customers SET Name=@Name, Email=@Email, Phone=@Phone, Address=@Address WHERE CustomerID=@CustomerID");
     res.send({ message: "User updated successfully" });
   } catch (err) {
     console.error("❌ Error updating user:", err);
@@ -77,13 +79,13 @@ app.put("/api/users/:id", async (req, res) => {
 });
 
 // ✅ Delete User (DELETE)
-app.delete("/api/users/:id", async (req, res) => {
+app.delete("/customers", async (req, res) => {
   const { id } = req.params;
   try {
     let pool = await sql.connect(dbConfig);
     await pool.request()
-      .input("id", sql.Int, id)
-      .query("DELETE FROM Users WHERE id=@id");
+      .input("CustomerID", sql.Int, id)
+      .query("DELETE FROM dbo.Customers WHERE CustomerID=@CustomerID");
     res.send({ message: "User deleted successfully" });
   } catch (err) {
     console.error("❌ Error deleting user:", err);
