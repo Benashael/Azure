@@ -47,7 +47,7 @@ app.post("/customers", async (req, res) => {
 });
 
 // ✅ Get All Users (READ)
-app.get("/customers", async (req, res) => {
+app.get("/api/users", async (req, res) => {
   try {
     let pool = await sql.connect(dbConfig);
     let result = await pool.request().query("SELECT * FROM dbo.Customers");
