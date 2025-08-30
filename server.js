@@ -59,7 +59,7 @@ app.get("/api/users", async (req, res) => {
 });
 
 // ✅ Update User (UPDATE)
-app.put("/api/users", async (req, res) => {
+app.put("/api/users/:id", async (req, res) => {
   const { id } = req.params;
   const { Name, Email, Phone, Address } = req.body;
   try {
@@ -79,7 +79,7 @@ app.put("/api/users", async (req, res) => {
 });
 
 // ✅ Delete User (DELETE)
-app.delete("/api/users", async (req, res) => {
+app.delete("/api/users/:id", async (req, res) => {
   const { id } = req.params;
   try {
     let pool = await sql.connect(dbConfig);
