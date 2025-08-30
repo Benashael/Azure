@@ -39,79 +39,79 @@
   </table>
 
   <script>
-    // 🔗 Backend API URL (update if deployed on Azure)
-    const API_URL = "webappbenone-g2fgetbtdnbka7fy.uksouth-01.azurewebsites.net";
+  // 🔗 Backend API URL
+  const API_URL = "https://webappbenone-g2fgetbtdnbka7fy.uksouth-01.azurewebsites.net/api/users";
 
-    // Fetch all customers
-    async function loadCustomers() {
-      let res = await fetch(API_URL);
-      let customers = await res.json();
-      let table = document.getElementById("customersTable");
-      table.innerHTML = "";
-      customers.forEach(c => {
-        let row = `<tr>
-          <td>${c.CustomerID}</td>
-          <td>${c.Name}</td>
-          <td>${c.Email}</td>
-          <td>${c.Phone}</td>
-          <td>${c.Address}</td>
-          <td>
-            <button onclick="editCustomer(${c.CustomerID}, '${c.Name}', '${c.Email}', '${c.Phone}', '${c.Address}')">✏️ Edit</button>
-            <button onclick="deleteCustomer(${c.CustomerID})">🗑️ Delete</button>
-          </td>
-        </tr>`;
-        table.innerHTML += row;
+  // Fetch all customers
+  async function loadCustomers() {
+    let res = await fetch(API_URL);
+    let customers = await res.json();
+    let table = document.getElementById("customersTable");
+    table.innerHTML = "";
+    customers.forEach(c => {
+      let row = `<tr>
+        <td>${c.CustomerID}</td>
+        <td>${c.Name}</td>
+        <td>${c.Email}</td>
+        <td>${c.Phone}</td>
+        <td>${c.Address}</td>
+        <td>
+          <button onclick="editCustomer(${c.CustomerID}, '${c.Name}', '${c.Email}', '${c.Phone}', '${c.Address}')">✏️ Edit</button>
+          <button onclick="deleteCustomer(${c.CustomerID})">🗑️ Delete</button>
+        </td>
+      </tr>`;
+      table.innerHTML += row;
+    });
+  }
+
+  // Add or Update Customer
+  document.getElementById("customerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    let id = document.getElementById("CustomerID").value;
+    let customer = {
+      Name: document.getElementById("Name").value,
+      Email: document.getElementById("Email").value,
+      Phone: document.getElementById("Phone").value,
+      Address: document.getElementById("Address").value
+    };
+    if (id) {
+      await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer)
+      });
+    } else {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer)
       });
     }
-
-    // Add or Update Customer
-    document.getElementById("customerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      let id = document.getElementById("CustomerID").value;
-      let customer = {
-        Name: document.getElementById("Name").value,
-        Email: document.getElementById("Email").value,
-        Phone: document.getElementById("Phone").value,
-        Address: document.getElementById("Address").value
-      };
-      if (id) {
-        await fetch(`${API_URL}/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(customer)
-        });
-      } else {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(customer)
-        });
-      }
-      e.target.reset();
-      document.getElementById("CustomerID").value = "";
-      loadCustomers();
-    });
-
-    // Edit Customer
-    function editCustomer(id, name, email, phone, address) {
-      document.getElementById("CustomerID").value = id;
-      document.getElementById("Name").value = name;
-      document.getElementById("Email").value = email;
-      document.getElementById("Phone").value = phone;
-      document.getElementById("Address").value = address;
-    }
-
-    // Delete Customer
-    async function deleteCustomer(id) {
-      if (confirm("Are you sure?")) {
-        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        loadCustomers();
-      }
-    }
-
-    // Load customers initially
+    e.target.reset();
+    document.getElementById("CustomerID").value = "";
     loadCustomers();
-  </script>
+  });
+
+  // Edit Customer
+  function editCustomer(id, name, email, phone, address) {
+    document.getElementById("CustomerID").value = id;
+    document.getElementById("Name").value = name;
+    document.getElementById("Email").value = email;
+    document.getElementById("Phone").value = phone;
+    document.getElementById("Address").value = address;
+  }
+
+  // Delete Customer
+  async function deleteCustomer(id) {
+    if (confirm("Are you sure?")) {
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      loadCustomers();
+    }
+  }
+
+  // Load customers initially
+  loadCustomers();
+</script>
 
 </body>
 </html>
