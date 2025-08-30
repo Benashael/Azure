@@ -33,7 +33,7 @@ app.post("/api/users", async (req, res) => {
       .input("name", sql.NVarChar, name)
       .input("email", sql.NVarChar, email)
       .input("age", sql.Int, age)
-      .query("INSERT INTO dbo.Customers (name, email, age) VALUES (@name, @email, @age)");
+      .query("INSERT INTO dbo.Customers (name, email, phone, address) VALUES (@name, @email, @age)");
     res.send({ message: "User added successfully" });
   } catch (err) {
     console.error("❌ Error inserting user:", err);
