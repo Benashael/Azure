@@ -19,93 +19,98 @@
   <h1>Customer Management</h1>
 
   <!-- Add / Update Form -->
-  <form id="userForm">
-    <input type="hidden" id="userId">
-    <input type="text" id="name" placeholder="Name" required>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="number" id="age" placeholder="Age" required>
-    <button type="submit">Save User</button>
+  <form id="customerForm">
+    <input type="hidden" id="CustomerID">
+    <input type="text" id="Name" placeholder="Name" required>
+    <input type="email" id="Email" placeholder="Email" required>
+    <input type="text" id="Phone" placeholder="Phone" required>
+    <input type="text" id="Address" placeholder="Address" required>
+    <button type="submit">Save Customer</button>
   </form>
 
-  <!-- Users Table -->
+  <!-- Customers Table -->
   <table>
     <thead>
       <tr>
-        <th>ID</th><th>Name</th><th>Email</th><th>Age</th><th>Actions</th>
+        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th>
       </tr>
     </thead>
-    <tbody id="usersTable"></tbody>
+    <tbody id="customersTable"></tbody>
   </table>
 
   <script>
-    const API_URL = "http://localhost:5000/api/users"; // 🔗 your backend API
-    
-    // Fetch all users
-    async function loadUsers() {
+    // 🔗 Backend API URL (update if deployed on Azure)
+    const API_URL = "http://localhost:5000/api/customers";
+
+    // Fetch all customers
+    async function loadCustomers() {
       let res = await fetch(API_URL);
-      let users = await res.json();
-      let table = document.getElementById("usersTable");
+      let customers = await res.json();
+      let table = document.getElementById("customersTable");
       table.innerHTML = "";
-      users.forEach(u => {
+      customers.forEach(c => {
         let row = `<tr>
-          <td>${u.id}</td>
-          <td>${u.name}</td>
-          <td>${u.email}</td>
-          <td>${u.age}</td>
+          <td>${c.CustomerID}</td>
+          <td>${c.Name}</td>
+          <td>${c.Email}</td>
+          <td>${c.Phone}</td>
+          <td>${c.Address}</td>
           <td>
-            <button onclick="editUser(${u.id}, '${u.name}', '${u.email}', ${u.age})">✏️ Edit</button>
-            <button onclick="deleteUser(${u.id})">🗑️ Delete</button>
+            <button onclick="editCustomer(${c.CustomerID}, '${c.Name}', '${c.Email}', '${c.Phone}', '${c.Address}')">✏️ Edit</button>
+            <button onclick="deleteCustomer(${c.CustomerID})">🗑️ Delete</button>
           </td>
         </tr>`;
         table.innerHTML += row;
       });
     }
 
-    // Add or Update User
-    document.getElementById("userForm").addEventListener("submit", async (e) => {
+    // Add or Update Customer
+    document.getElementById("customerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      let id = document.getElementById("userId").value;
-      let user = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        age: parseInt(document.getElementById("age").value)
+      let id = document.getElementById("CustomerID").value;
+      let customer = {
+        Name: document.getElementById("Name").value,
+        Email: document.getElementById("Email").value,
+        Phone: document.getElementById("Phone").value,
+        Address: document.getElementById("Address").value
       };
       if (id) {
         await fetch(`${API_URL}/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user)
+          body: JSON.stringify(customer)
         });
       } else {
         await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user)
+          body: JSON.stringify(customer)
         });
       }
       e.target.reset();
-      document.getElementById("userId").value = "";
-      loadUsers();
+      document.getElementById("CustomerID").value = "";
+      loadCustomers();
     });
 
-    // Edit User
-    function editUser(id, name, email, age) {
-      document.getElementById("userId").value = id;
-      document.getElementById("name").value = name;
-      document.getElementById("email").value = email;
-      document.getElementById("age").value = age;
+    // Edit Customer
+    function editCustomer(id, name, email, phone, address) {
+      document.getElementById("CustomerID").value = id;
+      document.getElementById("Name").value = name;
+      document.getElementById("Email").value = email;
+      document.getElementById("Phone").value = phone;
+      document.getElementById("Address").value = address;
     }
 
-    // Delete User
-    async function deleteUser(id) {
+    // Delete Customer
+    async function deleteCustomer(id) {
       if (confirm("Are you sure?")) {
         await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        loadUsers();
+        loadCustomers();
       }
     }
 
-    // Load users initially
-    loadUsers();
+    // Load customers initially
+    loadCustomers();
   </script>
 
 </body>
