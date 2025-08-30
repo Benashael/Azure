@@ -1,16 +1,22 @@
 const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json()); // built-in JSON parser
 
+// === Serve index.html directly from root ===
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 // ✅ Azure SQL Config (updated)
 const dbConfig = {
   user: "ben",                        // your SQL login username
-  password: "Connect@1234",                    // your SQL login password
-  database: "sqldboneben",              // your DB name
+  password: "Connect@1234",            // your SQL login password
+  database: "sqldboneben",             // your DB name
   server: "sqlserveroneben.database.windows.net", // full Azure SQL server name
   options: {
     encrypt: true,                     // required for Azure SQL
@@ -81,6 +87,6 @@ app.delete("/api/users/:id", async (req, res) => {
   }
 });
 
-// Start Server
+// === Start Server ===
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
